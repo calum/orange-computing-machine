@@ -20,8 +20,9 @@ function App() {
   let pinyinDisplay = "";
 
   useEffect(() => {
+    pinyinText = pinyin(mainText);
+    console.log(pinyinText);
     chineseText = [...mainText];
-    pinyinText = pinyin(mainText).map((word) => word[0]);
     pinyinDisplay = pinyinText.map((word, index) => {
       return (
         <span key={index}>
@@ -31,8 +32,6 @@ function App() {
     });
   }, [mainText]);
 
-  console.log(pinyinText);
-  console.log(chineseText);
 
   return (
     <Container>
