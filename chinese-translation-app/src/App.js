@@ -10,34 +10,45 @@ import React, { Component, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import pinyin from "pinyin";
 
 function App() {
   let [mainText, setMainText] = useState("");
+  let [highlightedText, setHighlightedText] = useState("");
+  let [fixedText, setFixedText] = useState(false);
   let pinyinText = [];
   let chineseText = [];
-  let pinyinDisplay = "";
+  let [pinyinDisplay, setPinyinDisplay] = useState([]);
 
   useEffect(() => {
-    pinyinText = pinyin(mainText);
+    pinyinText = pinyin(mainText).map((word) => {
+      return word[0];
+    });
     console.log(pinyinText);
     chineseText = [...mainText];
     pinyinDisplay = pinyinText.map((word, index) => {
-      return (
-        <span key={index}>
-          {word} {chineseText[index]}
-        </span>
-      );
+      return {
+        chinese: chineseText[index],
+        pinyin: word,
+      };
     });
+    console.log(pinyinDisplay);
+    setPinyinDisplay(pinyinDisplay);
   }, [mainText]);
 
+  console.log(pinyinDisplay);
 
-  return (
-    <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
+  const handleHighlight = (e) => {
+    let selection = window.getSelection();
+    let selectedText = selection.toString();
+    setHighlightedText(selectedText);
+  };
+
+  let textArea = null
+  if (!fixedText) {
+    textArea = (
+      <TextField
             id="outlined-multiline-static"
             label="Multiline"
             multiline
@@ -45,8 +56,42 @@ function App() {
             defaultValue=""
             variant="outlined"
             fullWidth
+            value={mainText}
             onChange={(e) => setMainText(e.target.value)}
           />
+    )
+  } else {
+    // display each Mandarin word with its Pinyin representation above it
+    let pinyinString = pinyinDisplay.map((word) => {
+      return word.pinyin + " ";
+    });
+    textArea = (
+      <div>
+        <Typography variant="h6">
+          {mainText}
+        </Typography>
+        <Typography variant="h6">
+          {pinyinString}
+        </Typography>
+      </div>
+    )
+  }
+
+  return (
+    <Container maxWidth="md">
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          {textArea}
+        </Grid>
+        <Grid item xs={12}>
+          <Button 
+            variant="contained"
+            onClick={() => {
+              setFixedText(!fixedText);
+            }}
+            >
+            {fixedText ? "Edit" : "Done"}
+          </Button>
         </Grid>
 
         <Grid item xs={6}>
@@ -72,7 +117,9 @@ function App() {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained">Translate</Button>
+          <Button variant="contained">
+            Translate
+          </Button>
         </Grid>
       </Grid>
     </Container>
