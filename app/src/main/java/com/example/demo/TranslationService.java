@@ -14,7 +14,8 @@ import org.json.JSONObject;
  */
 public class TranslationService {
 
-    private static final String API_KEY = "";
+    // Read the API key from the properties file
+    private static final String API_KEY = System.getProperty("CHATGPT.API_KEY");
 
     // The default message to send to the ChatGPT API
     private static final String DEFAULT_MESSAGE = "Please respond to my next message in two parts. " +
@@ -60,6 +61,7 @@ public class TranslationService {
             // Extract the key choices[0].message.content
             String response = EntityUtils.toString(client.execute(post).getEntity());
             JSONObject json = new JSONObject(response);
+            System.out.println(json);
             return json.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
         } catch (Exception e) {
             return "Error: " + e.getMessage();
