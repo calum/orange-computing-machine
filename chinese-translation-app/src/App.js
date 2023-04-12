@@ -12,11 +12,15 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { Container, Typography } from "@mui/material";
 import pinyin from "pinyin";
+import { translateText } from "./TranslatorService";
 
 function App() {
   let [mainText, setMainText] = useState("");
   let [highlightedText, setHighlightedText] = useState("");
   let [fixedText, setFixedText] = useState(false);
+  let [snippetText, setSnippetText] = useState("");
+  let [translatedText, setTranslatedText] = useState("");
+  let [loading, setLoading] = useState(false);
   let pinyinText = [];
   let chineseText = [];
   let [pinyinDisplay, setPinyinDisplay] = useState([]);
@@ -102,6 +106,8 @@ function App() {
             rows={16}
             defaultValue="Default Value"
             variant="outlined"
+            value={snippetText}
+            onChange={(e) => setSnippetText(e.target.value)}
             fullWidth
           />
         </Grid>
@@ -113,11 +119,25 @@ function App() {
             rows={16}
             defaultValue="Default Value"
             variant="outlined"
+            value={
+              loading ? "Loading..." : translatedText  
+            }
+            onChange={(e) => setTranslatedText(e.target.value)}
             fullWidth
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained">
+          <Button 
+            variant="contained"
+            onClick={() => {
+              setLoading(true);
+              translateText(snippetText).then((response) => {
+                setTranslatedText(response);
+                setLoading(false);
+              });
+            }}
+            disabled={loading}
+          >
             Translate
           </Button>
         </Grid>

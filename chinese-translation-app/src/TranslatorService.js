@@ -13,6 +13,7 @@ export const translateText = async (text) => {
     message: text,
   }
   const response = await axios.post(TRANSLATION_URL, message);
-  return response.data;
+  console.log(response)
+  return response.data.message;
 }
 
